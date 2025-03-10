@@ -305,10 +305,118 @@
       ],
       "title": "Panel Title",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "uid": "eefbh0a6lxjwgd"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "eefbh0a6lxjwgd"
+          },
+          "editorMode": "builder",
+          "format": "table",
+          "hide": false,
+          "rawSql": "SELECT * FROM room5 LIMIT 50 ",
+          "refId": "C",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "room5"
+        }
+      ],
+      "title": "Log",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "date",
+                "temp",
+                "humi",
+                "airquality",
+                "airqualitystatus"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
-  "refresh": "1s",
+  "refresh": "100ms",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
@@ -340,6 +448,6 @@
   "timezone": "browser",
   "title": "Room Monitor",
   "uid": "aefbgvtaodce8b",
-  "version": 29,
+  "version": 43,
   "weekStart": ""
 }
