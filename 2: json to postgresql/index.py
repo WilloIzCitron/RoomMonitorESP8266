@@ -14,18 +14,18 @@ print("JSON to PostgreSQL. if you want to terminate it, press Ctrl+\\ or in Linu
 
 #Make this commented if was exist, im tired to make it if statement
 #Grafana only read 50 rows, 1 row is used for live fetch, no logging
-cursor.execute("CREATE SEQUENCE ids MINVALUE 1 MAXVALUE 50 CYCLE")
+# cursor.execute("CREATE SEQUENCE ids MINVALUE 1 MAXVALUE 5 CYCLE")
 
-cursor.execute("""
-CREATE TABLE room5 (
-    room_id integer PRIMARY KEY DEFAULT nextval('ids'), 
-    date TIMESTAMP NOT NULL, 
-    temp FLOAT(32) NOT NULL, 
-    humi FLOAT(32) NOT NULL, 
-    airQuality INT NOT NULL, 
-    airQualityStatus VARCHAR(120) NOT NULL
-);
-""")
+# cursor.execute("""
+# CREATE TABLE room5 (
+#     room_id integer PRIMARY KEY DEFAULT nextval('ids'), 
+#     date TIMESTAMP NOT NULL, 
+#     temp FLOAT(32) NOT NULL, 
+#     humi FLOAT(32) NOT NULL, 
+#     airQuality INT NOT NULL, 
+#     airQualityStatus VARCHAR(120) NOT NULL
+# );
+# """)
 
 #keepalive ahh
 def publishData():
@@ -43,9 +43,9 @@ def publishData():
         rows = cursor.fetchone()
         if rows:
              room_id = rows[0]
-        print("data added!")
+        # print("data added!")
         conn.commit()
-        sleep(1)
+        sleep(0.01)
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
