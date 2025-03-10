@@ -13,19 +13,19 @@ cursor = conn.cursor()
 print("JSON to PostgreSQL. if you want to terminate it, press Ctrl+\\ or in Linux, run killall python on secondary terminal.")
 
 #Make this commented if was exist, im tired to make it if statement
-# Grafana only read 50 rows
-# cursor.execute("CREATE SEQUENCE ids MINVALUE 1 MAXVALUE 50 CYCLE")
+#Grafana only read 50 rows, 1 row is used for live fetch, no logging
+cursor.execute("CREATE SEQUENCE ids MINVALUE 1 MAXVALUE 50 CYCLE")
 
-# cursor.execute("""
-# CREATE TABLE room5 (
-#     room_id integer PRIMARY KEY DEFAULT nextval('ids'), 
-#     date TIMESTAMP NOT NULL, 
-#     temp FLOAT(32) NOT NULL, 
-#     humi FLOAT(32) NOT NULL, 
-#     airQuality INT NOT NULL, 
-#     airQualityStatus VARCHAR(120) NOT NULL
-# );
-# """)
+cursor.execute("""
+CREATE TABLE room5 (
+    room_id integer PRIMARY KEY DEFAULT nextval('ids'), 
+    date TIMESTAMP NOT NULL, 
+    temp FLOAT(32) NOT NULL, 
+    humi FLOAT(32) NOT NULL, 
+    airQuality INT NOT NULL, 
+    airQualityStatus VARCHAR(120) NOT NULL
+);
+""")
 
 #keepalive ahh
 def publishData():
