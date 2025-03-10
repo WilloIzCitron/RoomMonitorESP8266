@@ -4,6 +4,7 @@ Room Monitoring (Air Quality, Temperature and Humidity) with ESP8266. the result
 - WebServer
 - JSON data
 - Grafana (With PostgreSQL)
+
 OTA (Over The Air) supported, can be flash to ESP8266 without USB/UART
 
 ## Flowchart
