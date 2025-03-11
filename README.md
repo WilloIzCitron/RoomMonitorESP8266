@@ -13,6 +13,7 @@ OTA (Over The Air) supported, can be flash to ESP8266 without USB/UART
 ## Prerequites
 - ESP8266
 - Sensors (DHT22 & MQ-135)
+- Server for Python code, Grafana and Postgres (256gb storage for database and grafana is recommended)
 - OLED Display (optional)
 - Python 3.19+
 - Grafana
