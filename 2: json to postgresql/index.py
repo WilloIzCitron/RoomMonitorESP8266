@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 import requests
 import psycopg2
+import asyncio
 
 
 try:
@@ -10,16 +11,16 @@ try:
 except:
     print("cant connect to database")
 cursor = conn.cursor()
-print("JSON to PostgreSQL. if you want to terminate it, press Ctrl+\\ or in Linux, run killall python on secondary terminal.")
+print("JSON to PostgreSQL. if you want to terminate it, press Ctrl+\\ on main console or in Linux, run killall python on secondary terminal.")
 
 #Make this commented if was exist, im tired to make it if statement
 #Grafana only read 50 rows, 1 row is used for live fetch, no logging
 # cursor.execute("CREATE SEQUENCE ids MINVALUE 1 MAXVALUE 5 CYCLE")
 
 # cursor.execute("""
-# CREATE TABLE room5 (
+# CREATE TABLE continuosRoomData (
 #     room_id integer PRIMARY KEY DEFAULT nextval('ids'), 
-#     date TIMESTAMP NOT NULL, 
+#     date TIMESTAMP WITH TIME ZONE NOT NULL, 
 #     temp FLOAT(32) NOT NULL, 
 #     humi FLOAT(32) NOT NULL, 
 #     airQuality INT NOT NULL, 
@@ -27,10 +28,24 @@ print("JSON to PostgreSQL. if you want to terminate it, press Ctrl+\\ or in Linu
 # );
 # """)
 
+# Chronical Data Table
+# cursor.execute("""
+# CREATE TABLE chronicalRoomData (
+#     room_id SERIAL PRIMARY KEY, 
+#     date TIMESTAMP WITH TIME ZONE NOT NULL, 
+#     temp FLOAT(32) NOT NULL, 
+#     humi FLOAT(32) NOT NULL, 
+#     airQuality INT NOT NULL, 
+#     airQualityStatus VARCHAR(120) NOT NULL
+# );
+# """)
+
+
+# Set Time Zone
+cursor.execute("SET TIME ZONE '+7';")
+
 #keepalive ahh
-def publishData():
-    room_id = None
-    try:
+async def publishContinuousData():
         req = requests.get("http://192.168.18.20/api")
 
         jsonData = json.loads(req.content)
@@ -38,19 +53,27 @@ def publishData():
         humi = jsonData["humi"]
         airQuality = jsonData["airQuality"]
         airQualityStatus = jsonData["airQualityStatus"]
-        now = datetime.now()
-        cursor.execute("INSERT INTO room5(date, temp, humi, airQuality, airQualityStatus) VALUES(CURRENT_TIMESTAMP(1), "+temp+", "+humi+", "+airQuality+", \'"+airQualityStatus+"\') ON CONFLICT(room_id) DO UPDATE SET date = EXCLUDED.date, temp = EXCLUDED.temp, humi = EXCLUDED.humi, airQuality = EXCLUDED.airQuality, airQualityStatus = EXCLUDED.airQualityStatus RETURNING *;")
-        rows = cursor.fetchone()
-        if rows:
-             room_id = rows[0]
+        cursor.execute("INSERT INTO continuosRoomData(date, temp, humi, airQuality, airQualityStatus) VALUES(NOW(), "+temp+", "+humi+", "+airQuality+", \'"+airQualityStatus+"\') ON CONFLICT(room_id) DO UPDATE SET date = EXCLUDED.date, temp = EXCLUDED.temp, humi = EXCLUDED.humi, airQuality = EXCLUDED.airQuality, airQualityStatus = EXCLUDED.airQualityStatus RETURNING *;")
         # print("data added!")
         conn.commit()
-        sleep(0.01)
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        return room_id
+        await asyncio.sleep(1)
+
+async def publishChronicalData():
+        req = requests.get("http://192.168.18.20/api")
+
+        jsonData = json.loads(req.content)
+        temp = jsonData["temp"]
+        humi = jsonData["humi"]
+        airQuality = jsonData["airQuality"]
+        airQualityStatus = jsonData["airQualityStatus"]
+        cursor.execute("INSERT INTO chronicalRoomData(date, temp, humi, airQuality, airQualityStatus) VALUES(NOW(), "+temp+", "+humi+", "+airQuality+", \'"+airQualityStatus+"\') RETURNING *;")
+        # print("data added!")
+        conn.commit()
+        await asyncio.sleep(1)
+
+async def main():
+    await asyncio.gather(publishChronicalData(), publishContinuousData())
 
 #keepalive ahh
 while True:
-    publishData()
+    asyncio.run(main())
