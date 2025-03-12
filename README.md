@@ -19,6 +19,12 @@ OTA (Over The Air) supported, can be flash to ESP8266 without USB/UART
 - Grafana
 - PostgreSQL/MySQL/any SQL framework
 
+## Preview
+![image](https://github.com/user-attachments/assets/860fb75e-f14a-470c-afd2-12dfde81ec3d)
+![image](https://github.com/user-attachments/assets/72e50d39-9416-43b3-8eb2-d20f701b580c)
+
+
+
 ## Setup
 - need citation
 - Download WebServerIoT.ino first
